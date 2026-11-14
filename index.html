@@ -131,7 +131,7 @@
       to   { opacity: 1; transform: translateX(0); }
     }
 
-    /* Dashboard entrance animation */
+    /* Entrance animation */
     .fade-up { animation: fadeUp 0.5s ease both; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
@@ -414,8 +414,27 @@
     </div>
   </div>
 
+  <!-- ============ CUSTOM CONFIRM (DELETE) MODAL ============ -->
+  <div id="confirmModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass modal-panel rounded-2xl w-full max-w-md p-6">
+      <div class="flex items-start gap-4">
+        <div class="p-3 rounded-xl bg-rose-500/15 shrink-0">
+          <i data-lucide="trash-2" class="w-5 h-5 text-rose-400"></i>
+        </div>
+        <div>
+          <h3 id="confirmTitle" class="text-lg font-bold text-white">Are you sure?</h3>
+          <p id="confirmMessage" class="text-sm text-slate-400 mt-1"></p>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button id="confirmCancel" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition">Cancel</button>
+        <button id="confirmOk" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-rose-500 hover:bg-rose-400 text-white transition">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast container -->
-  <div id="toastContainer" class="fixed bottom-6 right-6 z-[60] space-y-3"></div>
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-[80] space-y-3"></div>
 
   <script>
     /* ============ HELPERS ============ */
@@ -436,6 +455,33 @@
       document.getElementById('toastContainer').appendChild(toast);
       setTimeout(() => toast.remove(), 2800);
     }
+
+    /* ============ CUSTOM CONFIRM ============ */
+    const confirmModal = document.getElementById('confirmModal');
+    let pendingAction = null;
+
+    // Opens the custom confirm popup. onConfirm runs only if user clicks Delete.
+    function openConfirm({ title, message, onConfirm }) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      pendingAction = onConfirm;
+      confirmModal.classList.remove('hidden');
+      confirmModal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeConfirm() {
+      confirmModal.classList.add('hidden');
+      confirmModal.classList.remove('flex');
+      pendingAction = null;
+    }
+
+    document.getElementById('confirmOk').addEventListener('click', () => {
+      if (pendingAction) pendingAction();
+      closeConfirm();
+    });
+    document.getElementById('confirmCancel').addEventListener('click', closeConfirm);
+    confirmModal.addEventListener('click', e => { if (e.target === confirmModal) closeConfirm(); });
 
     /* ============ DATA (LocalStorage) ============ */
     const seedClients = [
@@ -531,17 +577,24 @@
       showToast(`Client "${newClient.name}" added successfully.`);
     }
 
+    // Now uses the custom popup instead of browser confirm()
     function deleteClient(id) {
       const client = clients.find(c => c.id === id);
       if (!client) return;
-      if (!confirm(`Delete ${client.name} from your clients?`)) return;
-      clients = clients.filter(c => c.id !== id);
-      saveClients();
-      renderClients();
-      showToast('Client deleted.', 'error');
+
+      openConfirm({
+        title: 'Delete client?',
+        message: `"${client.name}" from ${client.company} will be removed permanently. This cannot be undone.`,
+        onConfirm: () => {
+          clients = clients.filter(c => c.id !== id);
+          saveClients();
+          renderClients();
+          showToast('Client deleted.', 'error');
+        }
+      });
     }
 
-    /* ============ MODAL ============ */
+    /* ============ ADD CLIENT MODAL ============ */
     const modal = document.getElementById('clientModal');
     const form = document.getElementById('clientForm');
 
@@ -566,6 +619,14 @@
       const data = Object.fromEntries(new FormData(form).entries());
       addClient(data);
       closeModal();
+    });
+
+    // Esc key closes any open popup
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeConfirm();
+        closeModal();
+      }
     });
 
     /* ============ SEARCH & FILTER ============ */
