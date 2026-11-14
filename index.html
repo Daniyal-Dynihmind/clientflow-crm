@@ -1452,7 +1452,10 @@ sidebarOverlay.addEventListener('click', closeSidebar);
         }
       }
     });
-
+/* ============ NOTIFICATIONS ============ */
+document.getElementById('notifBtn').addEventListener('click', () => {
+  showToast('No new notifications right now.');
+});
     /* ============ INIT ============ */
     applyBranding();
     fillSettingsForm();
