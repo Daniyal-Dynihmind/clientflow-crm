@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ClientFlow | CRM & Invoicing for Agencies</title>
 
-  <!-- Fonts & Libraries -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,45 +14,138 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top left, #0f1f1c 0%, #05070d 45%, #05070d 100%);
+      background: #05070d;
       min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    /* Animated background glow */
+    .bg-orbs::before, .bg-orbs::after {
+      content: "";
+      position: fixed;
+      width: 520px; height: 520px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.25;
+      z-index: -1;
+      pointer-events: none;
+      animation: float 14s ease-in-out infinite;
+    }
+    .bg-orbs::before { background: #10b981; top: -150px; left: -120px; }
+    .bg-orbs::after  { background: #06b6d4; bottom: -180px; right: -120px; animation-delay: -6s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50%      { transform: translate(40px, 30px); }
+    }
+
+    /* Glass surface */
     .glass {
-      background: rgba(15, 23, 42, 0.55);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(148, 163, 184, 0.12);
+      background: linear-gradient(145deg, rgba(15,23,42,0.75), rgba(15,23,42,0.35));
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(148,163,184,0.12);
+      box-shadow: 0 8px 32px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
     }
+
+    /* 3D tilt card with spotlight */
+    .tilt {
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tilt::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(16,185,129,0.14), transparent 40%);
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .tilt:hover::after { opacity: 1; }
+    .tilt:hover {
+      border-color: rgba(16,185,129,0.4);
+      box-shadow: 0 20px 50px -15px rgba(16,185,129,0.25);
+    }
+
+    /* Gradient text */
     .glow-text {
       background: linear-gradient(135deg, #34d399, #10b981, #06b6d4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .nav-item {
-      transition: all 0.2s ease;
-    }
+
+    /* Sidebar nav */
+    .nav-item { transition: all 0.2s ease; }
     .nav-item.active {
-      background: linear-gradient(90deg, rgba(16,185,129,0.18), rgba(16,185,129,0.02));
+      background: linear-gradient(90deg, rgba(16,185,129,0.20), rgba(16,185,129,0.02));
       color: #34d399;
-      border-left: 3px solid #10b981;
+      box-shadow: inset 3px 0 0 #10b981;
     }
-    .card-hover {
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      color: #022c22;
+      box-shadow: 0 8px 24px -8px rgba(16,185,129,0.6);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s;
     }
-    .card-hover:hover {
-      transform: translateY(-3px);
-      border-color: rgba(16, 185, 129, 0.45);
-      box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.25);
+    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.08); box-shadow: 0 12px 30px -8px rgba(16,185,129,0.7); }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
+
+    /* Inputs */
+    .input {
+      background: rgba(2,6,23,0.6);
+      border: 1px solid rgba(51,65,85,0.8);
+      color: #e2e8f0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+    }
+    select.input option { background: #0f172a; }
+
+    /* Status badges */
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .badge-lead      { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-active    { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-completed { background: rgba(99,102,241,0.12); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+
+    /* Table */
+    .table-row { transition: background 0.2s; }
+    .table-row:hover { background: rgba(16,185,129,0.04); }
+
+    /* Modal */
+    .modal-backdrop { background: rgba(2,6,23,0.7); backdrop-filter: blur(6px); }
+    .modal-panel { animation: pop 0.25s ease; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Toast */
+    .toast { animation: slideIn 0.3s ease; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Dashboard entrance animation */
+    .fade-up { animation: fadeUp 0.5s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 
-<body class="text-slate-200">
+<body class="text-slate-200 bg-orbs">
 
   <div class="flex min-h-screen">
 
     <!-- ============ SIDEBAR ============ -->
     <aside class="glass w-64 flex-col p-6 hidden md:flex sticky top-0 h-screen">
-      <!-- Logo -->
       <div class="flex items-center gap-3 mb-10 px-2">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
           <i data-lucide="zap" class="w-5 h-5 text-slate-950"></i>
@@ -61,40 +153,37 @@
         <h1 class="text-xl font-extrabold tracking-tight text-white">Client<span class="text-emerald-400">Flow</span></h1>
       </div>
 
-      <!-- Navigation -->
       <p class="text-xs uppercase tracking-widest text-slate-500 px-3 mb-3">Main Menu</p>
       <nav class="space-y-1">
-        <button onclick="showView('dashboard', this)" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium">
+        <button data-view="dashboard" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium">
           <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
         </button>
-        <button onclick="showView('clients', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+        <button data-view="clients" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
           <i data-lucide="users" class="w-5 h-5"></i> Clients
         </button>
-        <button onclick="showView('invoices', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+        <button data-view="invoices" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
           <i data-lucide="file-text" class="w-5 h-5"></i> Invoices
         </button>
-        <button onclick="showView('settings', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+        <button data-view="settings" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
           <i data-lucide="settings" class="w-5 h-5"></i> Settings
         </button>
       </nav>
 
-      <!-- Upgrade card -->
-      <div class="mt-auto p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/10 border border-emerald-500/20">
+      <div class="tilt mt-auto p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/10 border border-emerald-500/20">
         <p class="text-sm font-semibold text-white">Pro Plan</p>
         <p class="text-xs text-slate-400 mt-1">Unlock unlimited clients and invoices.</p>
-        <button class="mt-3 w-full text-sm font-semibold py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">Upgrade</button>
+        <button class="btn-primary mt-3 w-full text-sm font-semibold py-2 rounded-lg">Upgrade</button>
       </div>
     </aside>
 
     <!-- ============ MAIN ============ -->
     <div class="flex-1 flex flex-col min-w-0">
 
-      <!-- Top Header -->
+      <!-- Header -->
       <header class="glass sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-4">
         <div class="relative w-full max-w-md hidden sm:block">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
-          <input type="text" placeholder="Search clients, invoices..."
-            class="w-full bg-slate-900/70 border border-slate-800 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition" />
+          <input id="globalSearch" type="text" placeholder="Search clients..." class="input w-full rounded-lg pl-10 pr-4 py-2 text-sm" />
         </div>
         <div class="flex items-center gap-4 ml-auto">
           <button class="p-2 rounded-lg hover:bg-slate-800 transition relative">
@@ -111,20 +200,17 @@
         </div>
       </header>
 
-      <!-- Page Content -->
       <main class="p-6 md:p-10 space-y-8">
 
-        <!-- ===== DASHBOARD VIEW ===== -->
-        <section id="view-dashboard" class="view space-y-8">
-
+        <!-- ===== DASHBOARD ===== -->
+        <section id="view-dashboard" class="view space-y-8 fade-up">
           <div>
             <h2 class="text-3xl font-extrabold text-white">Good morning, <span class="glow-text">Daniyal</span> 👋</h2>
             <p class="text-slate-400 mt-1">Here is what is happening with your business this month.</p>
           </div>
 
-          <!-- KPI Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass card-hover rounded-2xl p-6">
+            <div class="glass tilt rounded-2xl p-6">
               <div class="flex justify-between items-start">
                 <div>
                   <p class="text-sm text-slate-400">Total Revenue</p>
@@ -135,18 +221,18 @@
               <p class="text-xs text-emerald-400 mt-4 flex items-center gap-1"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +18.2% from last month</p>
             </div>
 
-            <div class="glass card-hover rounded-2xl p-6">
+            <div class="glass tilt rounded-2xl p-6">
               <div class="flex justify-between items-start">
                 <div>
-                  <p class="text-sm text-slate-400">Active Projects</p>
-                  <h3 class="text-3xl font-extrabold text-white mt-2">8</h3>
+                  <p class="text-sm text-slate-400">Active Clients</p>
+                  <h3 id="dash-active" class="text-3xl font-extrabold text-white mt-2">0</h3>
                 </div>
                 <div class="p-2.5 rounded-xl bg-cyan-500/15"><i data-lucide="briefcase" class="w-5 h-5 text-cyan-400"></i></div>
               </div>
-              <p class="text-xs text-cyan-400 mt-4 flex items-center gap-1"><i data-lucide="activity" class="w-3.5 h-3.5"></i> 3 due this week</p>
+              <p class="text-xs text-cyan-400 mt-4 flex items-center gap-1"><i data-lucide="activity" class="w-3.5 h-3.5"></i> Synced with your CRM</p>
             </div>
 
-            <div class="glass card-hover rounded-2xl p-6">
+            <div class="glass tilt rounded-2xl p-6">
               <div class="flex justify-between items-start">
                 <div>
                   <p class="text-sm text-slate-400">Pending Invoices</p>
@@ -158,9 +244,8 @@
             </div>
           </div>
 
-          <!-- Chart + Activity -->
           <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div class="glass rounded-2xl p-6 xl:col-span-2">
+            <div class="glass tilt rounded-2xl p-6 xl:col-span-2">
               <div class="flex justify-between items-center mb-6">
                 <div>
                   <h4 class="font-semibold text-white">Revenue Analytics</h4>
@@ -171,7 +256,7 @@
               <canvas id="revenueChart" height="120"></canvas>
             </div>
 
-            <div class="glass rounded-2xl p-6">
+            <div class="glass tilt rounded-2xl p-6">
               <h4 class="font-semibold text-white mb-6">Recent Activity</h4>
               <ul class="space-y-5">
                 <li class="flex gap-3">
@@ -195,28 +280,307 @@
           </div>
         </section>
 
-        <!-- ===== PLACEHOLDER VIEWS (Part 2, 3, 4) ===== -->
-        <section id="view-clients" class="view hidden">
-          <h2 class="text-3xl font-extrabold text-white">Clients</h2>
-          <p class="text-slate-400 mt-2">Coming in Part 2.</p>
+        <!-- ===== CLIENTS (CRM) ===== -->
+        <section id="view-clients" class="view hidden space-y-8 fade-up">
+
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 class="text-3xl font-extrabold text-white">Clients</h2>
+              <p class="text-slate-400 mt-1">Manage your leads, active clients and completed projects.</p>
+            </div>
+            <button id="openAddClient" class="btn-primary px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 justify-center">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add New Client
+            </button>
+          </div>
+
+          <!-- Stat mini cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="glass tilt rounded-xl p-5">
+              <p class="text-xs uppercase tracking-wider text-amber-400 font-semibold">Leads</p>
+              <p id="count-lead" class="text-2xl font-extrabold text-white mt-1">0</p>
+            </div>
+            <div class="glass tilt rounded-xl p-5">
+              <p class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Active</p>
+              <p id="count-active" class="text-2xl font-extrabold text-white mt-1">0</p>
+            </div>
+            <div class="glass tilt rounded-xl p-5">
+              <p class="text-xs uppercase tracking-wider text-indigo-300 font-semibold">Completed</p>
+              <p id="count-completed" class="text-2xl font-extrabold text-white mt-1">0</p>
+            </div>
+          </div>
+
+          <!-- Table card -->
+          <div class="glass rounded-2xl overflow-hidden">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-5 border-b border-slate-800/80">
+              <div class="relative w-full md:max-w-sm">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input id="clientSearch" type="text" placeholder="Search by name, company or email..." class="input w-full rounded-lg pl-10 pr-4 py-2 text-sm" />
+              </div>
+              <select id="statusFilter" class="input rounded-lg px-3 py-2 text-sm md:w-44">
+                <option value="all">All statuses</option>
+                <option value="Lead">Lead</option>
+                <option value="Active">Active</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-950/40">
+                  <tr>
+                    <th class="text-left px-5 py-3 font-semibold">Client</th>
+                    <th class="text-left px-5 py-3 font-semibold">Company</th>
+                    <th class="text-left px-5 py-3 font-semibold">Email</th>
+                    <th class="text-left px-5 py-3 font-semibold">Status</th>
+                    <th class="text-right px-5 py-3 font-semibold">Value</th>
+                    <th class="px-5 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody id="clientsTable" class="divide-y divide-slate-800/70"></tbody>
+              </table>
+              <div id="emptyState" class="hidden text-center py-16">
+                <i data-lucide="users" class="w-10 h-10 text-slate-600 mx-auto mb-3"></i>
+                <p class="text-slate-400">No clients found. Try a different search or add a new client.</p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section id="view-invoices" class="view hidden">
+        <!-- ===== PLACEHOLDERS (Part 3 & 4) ===== -->
+        <section id="view-invoices" class="view hidden fade-up">
           <h2 class="text-3xl font-extrabold text-white">Invoices</h2>
-          <p class="text-slate-400 mt-2">Coming in Part 3.</p>
+          <p class="text-slate-400 mt-2">Invoice Builder coming in Part 3.</p>
         </section>
 
-        <section id="view-settings" class="view hidden">
+        <section id="view-settings" class="view hidden fade-up">
           <h2 class="text-3xl font-extrabold text-white">Settings</h2>
-          <p class="text-slate-400 mt-2">Coming in Part 4.</p>
+          <p class="text-slate-400 mt-2">Settings page coming in Part 4.</p>
         </section>
 
       </main>
     </div>
   </div>
 
+  <!-- ============ ADD CLIENT MODAL ============ -->
+  <div id="clientModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass modal-panel rounded-2xl w-full max-w-lg p-6 md:p-8 relative">
+      <button id="closeModal" class="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-800 transition">
+        <i data-lucide="x" class="w-5 h-5 text-slate-400"></i>
+      </button>
+      <h3 class="text-2xl font-bold text-white">Add New Client</h3>
+      <p class="text-sm text-slate-400 mt-1 mb-6">Fill in the details below. The client will be saved in your browser.</p>
+
+      <form id="clientForm" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Full Name *</label>
+            <input name="name" required placeholder="e.g. John Smith" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Company *</label>
+            <input name="company" required placeholder="e.g. Acme Corp" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Email *</label>
+            <input name="email" type="email" required placeholder="john@acme.com" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Phone</label>
+            <input name="phone" placeholder="+1 555 000 1234" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Status</label>
+            <select name="status" class="input w-full rounded-lg px-3 py-2.5 text-sm">
+              <option value="Lead">Lead</option>
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Deal Value ($)</label>
+            <input name="value" type="number" min="0" placeholder="e.g. 2500" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" id="cancelModal" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition">Cancel</button>
+          <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold">Save Client</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-[60] space-y-3"></div>
+
   <script>
-    // Switch between views and update the active sidebar item
+    /* ============ HELPERS ============ */
+    const STORAGE_KEY = 'clientflow_clients';
+
+    // Escape user input before putting it into HTML (security)
+    function escapeHTML(str) {
+      return String(str ?? '').replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function showToast(message, type = 'success') {
+      const colors = type === 'success' ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300';
+      const toast = document.createElement('div');
+      toast.className = `toast glass border ${colors} px-4 py-3 rounded-xl text-sm font-medium shadow-2xl`;
+      toast.textContent = message;
+      document.getElementById('toastContainer').appendChild(toast);
+      setTimeout(() => toast.remove(), 2800);
+    }
+
+    /* ============ DATA (LocalStorage) ============ */
+    const seedClients = [
+      { id: 1, name: 'Sarah Johnson', company: 'Acme Corp', email: 'sarah@acmecorp.com', phone: '+1 415 555 0101', status: 'Active', value: 4500 },
+      { id: 2, name: 'Mark Reynolds', company: 'Nova Labs', email: 'mark@novalabs.io', phone: '+44 20 7946 0958', status: 'Lead', value: 1800 },
+      { id: 3, name: 'Emily Chen', company: 'Bright Studio', email: 'emily@brightstudio.co', phone: '+61 2 9876 5432', status: 'Lead', value: 950 },
+      { id: 4, name: 'David Miller', company: 'TechWave', email: 'david@techwave.com', phone: '+1 212 555 0199', status: 'Active', value: 7200 },
+      { id: 5, name: 'Olivia Brown', company: 'Greenleaf Co.', email: 'olivia@greenleaf.co', phone: '+1 303 555 0144', status: 'Completed', value: 3100 },
+      { id: 6, name: 'James Wilson', company: 'Pixel Forge', email: 'james@pixelforge.dev', phone: '+1 646 555 0177', status: 'Completed', value: 5600 }
+    ];
+
+    function loadClients() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seedClients));
+      return [...seedClients];
+    }
+
+    function saveClients() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    }
+
+    let clients = loadClients();
+
+    /* ============ CLIENTS RENDERING ============ */
+    const statusBadge = {
+      Lead: '<span class="badge badge-lead">● Lead</span>',
+      Active: '<span class="badge badge-active">● Active</span>',
+      Completed: '<span class="badge badge-completed">● Completed</span>'
+    };
+
+    function renderClients() {
+      const term = document.getElementById('clientSearch').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+
+      const filtered = clients.filter(c => {
+        const matchesSearch = [c.name, c.company, c.email].some(f => f.toLowerCase().includes(term));
+        const matchesStatus = status === 'all' || c.status === status;
+        return matchesSearch && matchesStatus;
+      });
+
+      const tbody = document.getElementById('clientsTable');
+      tbody.innerHTML = filtered.map(c => `
+        <tr class="table-row">
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400/80 to-cyan-500/80 flex items-center justify-center font-bold text-slate-950 text-xs">
+                ${escapeHTML(c.name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase())}
+              </div>
+              <span class="font-semibold text-white">${escapeHTML(c.name)}</span>
+            </div>
+          </td>
+          <td class="px-5 py-4 text-slate-300">${escapeHTML(c.company)}</td>
+          <td class="px-5 py-4 text-slate-400">${escapeHTML(c.email)}</td>
+          <td class="px-5 py-4">${statusBadge[c.status] || ''}</td>
+          <td class="px-5 py-4 text-right font-semibold text-white">$${Number(c.value || 0).toLocaleString()}</td>
+          <td class="px-5 py-4 text-right">
+            <button onclick="deleteClient(${c.id})" class="p-2 rounded-lg hover:bg-rose-500/10 transition" title="Delete client">
+              <i data-lucide="trash-2" class="w-4 h-4 text-slate-500 hover:text-rose-400"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('emptyState').classList.toggle('hidden', filtered.length > 0);
+
+      updateStats();
+      lucide.createIcons();
+    }
+
+    function updateStats() {
+      const count = s => clients.filter(c => c.status === s).length;
+      document.getElementById('count-lead').textContent = count('Lead');
+      document.getElementById('count-active').textContent = count('Active');
+      document.getElementById('count-completed').textContent = count('Completed');
+      document.getElementById('dash-active').textContent = count('Active');
+    }
+
+    /* ============ ADD / DELETE CLIENT ============ */
+    function addClient(data) {
+      const newClient = {
+        id: Date.now(),
+        name: data.name.trim(),
+        company: data.company.trim(),
+        email: data.email.trim(),
+        phone: (data.phone || '').trim(),
+        status: data.status,
+        value: Number(data.value) || 0
+      };
+      clients.unshift(newClient);
+      saveClients();
+      renderClients();
+      showToast(`Client "${newClient.name}" added successfully.`);
+    }
+
+    function deleteClient(id) {
+      const client = clients.find(c => c.id === id);
+      if (!client) return;
+      if (!confirm(`Delete ${client.name} from your clients?`)) return;
+      clients = clients.filter(c => c.id !== id);
+      saveClients();
+      renderClients();
+      showToast('Client deleted.', 'error');
+    }
+
+    /* ============ MODAL ============ */
+    const modal = document.getElementById('clientModal');
+    const form = document.getElementById('clientForm');
+
+    function openModal() {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      form.reset();
+    }
+
+    document.getElementById('openAddClient').addEventListener('click', openModal);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('cancelModal').addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      addClient(data);
+      closeModal();
+    });
+
+    /* ============ SEARCH & FILTER ============ */
+    document.getElementById('clientSearch').addEventListener('input', renderClients);
+    document.getElementById('statusFilter').addEventListener('change', renderClients);
+
+    // Top header search also filters the clients table
+    const globalSearch = document.getElementById('globalSearch');
+    globalSearch.addEventListener('input', () => {
+      document.getElementById('clientSearch').value = globalSearch.value;
+      showView('clients', document.querySelector('[data-view="clients"]'));
+      renderClients();
+    });
+
+    /* ============ NAVIGATION ============ */
     function showView(name, btn) {
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
       document.getElementById('view-' + name).classList.remove('hidden');
@@ -225,18 +589,42 @@
         n.classList.remove('active', 'text-emerald-400');
         n.classList.add('text-slate-400');
       });
-      btn.classList.add('active');
-      btn.classList.remove('text-slate-400');
+      if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('text-slate-400');
+      }
     }
 
-    // Render Lucide icons
-    lucide.createIcons();
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => showView(btn.dataset.view, btn));
+    });
 
-    // Revenue chart with gradient fill
+    /* ============ 3D TILT + SPOTLIGHT ============ */
+    document.addEventListener('mousemove', e => {
+      const card = e.target.closest('.tilt');
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rotX = ((y / rect.height) - 0.5) * -8;
+      const rotY = ((x / rect.width) - 0.5) * 8;
+      card.style.transform = `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+    });
+
+    document.addEventListener('mouseout', e => {
+      const card = e.target.closest('.tilt');
+      if (card && !card.contains(e.relatedTarget)) {
+        card.style.transform = '';
+      }
+    });
+
+    /* ============ CHART ============ */
     const canvas = document.getElementById('revenueChart');
     const ctx = canvas.getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.9)');
+    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.95)');
     gradient.addColorStop(1, 'rgba(6, 182, 212, 0.15)');
 
     new Chart(canvas, {
@@ -261,7 +649,7 @@
             borderColor: '#10b981',
             borderWidth: 1,
             padding: 12,
-            callbacks: { label: ctx => ' $' + ctx.parsed.y.toLocaleString() }
+            callbacks: { label: c => ' $' + c.parsed.y.toLocaleString() }
           }
         },
         scales: {
@@ -270,6 +658,10 @@
         }
       }
     });
+
+    /* ============ INIT ============ */
+    lucide.createIcons();
+    renderClients();
   </script>
 </body>
 </html>
