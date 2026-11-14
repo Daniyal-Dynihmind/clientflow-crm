@@ -1,1 +1,117 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClientFlow CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans">
+
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 border-r border-slate-800 p-6 hidden md:block">
+      <h1 class="text-2xl font-bold text-emerald-400 mb-10">ClientFlow</h1>
+      <nav class="space-y-2">
+        <button onclick="showView('dashboard')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">📊 Dashboard</button>
+        <button onclick="showView('clients')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">👥 Clients</button>
+        <button onclick="showView('invoices')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">🧾 Invoices</button>
+        <button onclick="showView('settings')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">⚙️ Settings</button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-10">
+
+      <!-- Dashboard View -->
+      <section id="view-dashboard" class="view">
+        <h2 class="text-3xl font-bold mb-2">Dashboard</h2>
+        <p class="text-slate-400 mb-8">Welcome back! Here is your business overview.</p>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p class="text-slate-400 text-sm">Total Revenue</p>
+            <h3 class="text-3xl font-bold text-emerald-400 mt-2">$42,500</h3>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p class="text-slate-400 text-sm">Active Projects</p>
+            <h3 class="text-3xl font-bold text-white mt-2">8</h3>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+            <p class="text-slate-400 text-sm">Pending Invoices</p>
+            <h3 class="text-3xl font-bold text-amber-400 mt-2">3</h3>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+          <h4 class="font-semibold mb-4">Revenue Analytics</h4>
+          <canvas id="revenueChart" height="100"></canvas>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+          <h4 class="font-semibold mb-4">Recent Activity</h4>
+          <ul class="space-y-3 text-sm text-slate-300">
+            <li>✅ Invoice #1024 paid by Acme Corp</li>
+            <li>🆕 New lead added: Bright Studio</li>
+            <li>📄 Invoice #1025 sent to Nova Labs</li>
+            <li>⏳ Invoice #1023 is overdue (TechWave)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Placeholder Views (Part 2, 3, 4 mein banenge) -->
+      <section id="view-clients" class="view hidden">
+        <h2 class="text-3xl font-bold">Clients</h2>
+        <p class="text-slate-400 mt-2">Part 2 mein banayenge.</p>
+      </section>
+
+      <section id="view-invoices" class="view hidden">
+        <h2 class="text-3xl font-bold">Invoices</h2>
+        <p class="text-slate-400 mt-2">Part 3 mein banayenge.</p>
+      </section>
+
+      <section id="view-settings" class="view hidden">
+        <h2 class="text-3xl font-bold">Settings</h2>
+        <p class="text-slate-400 mt-2">Part 4 mein banayenge.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Navigation: ek waqt par ek hi view dikhega
+    function showView(name) {
+      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+      document.getElementById('view-' + name).classList.remove('hidden');
+    }
+
+    // Revenue Chart
+    const ctx = document.getElementById('revenueChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Revenue ($)',
+          data: [4200, 5800, 4900, 7200, 6800, 9100],
+          backgroundColor: '#10b981',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#cbd5e1' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
+          y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
