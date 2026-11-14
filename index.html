@@ -129,6 +129,20 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Toggle switch */
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle span {
+      position: absolute; inset: 0; cursor: pointer; border-radius: 999px;
+      background: #1e293b; border: 1px solid #334155; transition: 0.2s;
+    }
+    .toggle span::before {
+      content: ""; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px;
+      background: #94a3b8; border-radius: 50%; transition: 0.2s;
+    }
+    .toggle input:checked + span { background: #10b981; border-color: #10b981; }
+    .toggle input:checked + span::before { transform: translateX(20px); background: #022c22; }
+
     /* PRINT: only the invoice paper is printed */
     @media print {
       body { background: #fff !important; }
@@ -151,10 +165,10 @@
     <!-- ============ SIDEBAR ============ -->
     <aside class="glass w-64 flex-col p-6 hidden md:flex sticky top-0 h-screen no-print">
       <div class="flex items-center gap-3 mb-10 px-2">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+        <div id="sideLogo" class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
           <i data-lucide="zap" class="w-5 h-5 text-slate-950"></i>
         </div>
-        <h1 class="text-xl font-extrabold tracking-tight text-white">Client<span class="text-emerald-400">Flow</span></h1>
+        <h1 class="text-xl font-extrabold tracking-tight text-white"><span id="sideBrandName">Client</span><span class="text-emerald-400">Flow</span></h1>
       </div>
 
       <p class="text-xs uppercase tracking-widest text-slate-500 px-3 mb-3">Main Menu</p>
@@ -194,10 +208,10 @@
             <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-400 rounded-full"></span>
           </button>
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 text-sm">DD</div>
+            <div id="headerAvatar" class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 text-sm">DD</div>
             <div class="hidden lg:block leading-tight">
-              <p class="text-sm font-semibold text-white">Daniyal Dynihmind</p>
-              <p class="text-xs text-slate-500">Agency Owner</p>
+              <p id="headerName" class="text-sm font-semibold text-white">Daniyal Dynihmind</p>
+              <p id="headerRole" class="text-xs text-slate-500">Agency Owner</p>
             </div>
           </div>
         </div>
@@ -208,7 +222,7 @@
         <!-- ===== DASHBOARD ===== -->
         <section id="view-dashboard" class="view space-y-8 fade-up">
           <div>
-            <h2 class="text-3xl font-extrabold text-white">Good morning, <span class="glow-text">Daniyal</span> 👋</h2>
+            <h2 class="text-3xl font-extrabold text-white">Good morning, <span class="glow-text" id="greetName">Daniyal</span> 👋</h2>
             <p class="text-slate-400 mt-1">Here is what is happening with your business this month.</p>
           </div>
 
@@ -364,7 +378,7 @@
           </div>
         </section>
 
-        <!-- ===== INVOICE BUILDER (split view) ===== -->
+        <!-- ===== INVOICE BUILDER ===== -->
         <section id="view-builder" class="view hidden space-y-6 fade-up">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 no-print">
             <div>
@@ -380,8 +394,6 @@
           </div>
 
           <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-            <!-- LEFT: FORM -->
             <div class="glass rounded-2xl p-6 space-y-6 no-print">
               <div>
                 <h4 class="font-semibold text-white mb-3">Invoice Details</h4>
@@ -441,7 +453,6 @@
               </div>
             </div>
 
-            <!-- RIGHT: LIVE PREVIEW -->
             <div class="space-y-4">
               <div class="flex justify-end no-print">
                 <button id="printBtn" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-white flex items-center gap-2 transition">
@@ -456,9 +467,9 @@
                     <p class="text-slate-500 mt-1" id="p-number">#INV-0000</p>
                   </div>
                   <div class="text-right">
-                    <p class="font-bold text-emerald-600 text-lg">ClientFlow Agency</p>
-                    <p class="text-slate-500 text-xs">Karachi, Pakistan</p>
-                    <p class="text-slate-500 text-xs">billing@clientflow.dev</p>
+                    <p id="p-agency" class="font-bold text-emerald-600 text-lg">ClientFlow Agency</p>
+                    <p id="p-address" class="text-slate-500 text-xs">Karachi, Pakistan</p>
+                    <p id="p-email" class="text-slate-500 text-xs">billing@clientflow.dev</p>
                   </div>
                 </div>
 
@@ -502,16 +513,146 @@
                   <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">Notes</p>
                   <p id="p-notes" class="text-slate-600 whitespace-pre-line">—</p>
                 </div>
-                <p class="text-center text-xs text-slate-400 mt-16">Thank you for your business.</p>
+                <p id="p-footer" class="text-center text-xs text-slate-400 mt-16">Thank you for your business.</p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- ===== SETTINGS (Part 4) ===== -->
-        <section id="view-settings" class="view hidden fade-up">
-          <h2 class="text-3xl font-extrabold text-white">Settings</h2>
-          <p class="text-slate-400 mt-2">Settings page coming in Part 4.</p>
+        <!-- ===== SETTINGS ===== -->
+        <section id="view-settings" class="view hidden space-y-8 fade-up">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 class="text-3xl font-extrabold text-white">Settings</h2>
+              <p class="text-slate-400 mt-1">Manage your agency profile, branding and invoice defaults.</p>
+            </div>
+            <button id="resetSettings" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition">Reset to defaults</button>
+          </div>
+
+          <form id="settingsForm" class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <!-- Left: preview card -->
+            <div class="space-y-6">
+              <div class="glass tilt rounded-2xl p-6 text-center">
+                <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-5">Brand Preview</p>
+                <div id="prevLogo" class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-2xl font-extrabold text-slate-950 shadow-xl" style="background: linear-gradient(135deg, #34d399, #10b981);">CF</div>
+                <h3 id="prevName" class="text-xl font-bold text-white mt-4">ClientFlow Agency</h3>
+                <p id="prevTag" class="text-sm text-slate-400 mt-1">Digital Agency</p>
+                <button type="button" id="prevBtn" class="mt-5 px-4 py-2 rounded-lg text-sm font-semibold text-slate-950" style="background:#10b981;">Accent Button</button>
+              </div>
+
+              <div class="glass tilt rounded-2xl p-6">
+                <p class="text-sm font-semibold text-white mb-1">Data Storage</p>
+                <p class="text-xs text-slate-400 mb-4">Your clients, invoices and settings are saved in this browser.</p>
+                <button type="button" id="clearData" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 transition">Clear all data</button>
+              </div>
+            </div>
+
+            <!-- Right: forms -->
+            <div class="xl:col-span-2 space-y-6">
+
+              <div class="glass rounded-2xl p-6 space-y-5">
+                <h4 class="font-semibold text-white">Agency Profile</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Agency Name *</label>
+                    <input name="agencyName" required class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Owner Name</label>
+                    <input name="ownerName" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Billing Email</label>
+                    <input name="email" type="email" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Phone</label>
+                    <input name="phone" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div class="md:col-span-2">
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Address</label>
+                    <input name="address" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Tagline</label>
+                    <input name="tagline" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Website</label>
+                    <input name="website" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass rounded-2xl p-6 space-y-5">
+                <h4 class="font-semibold text-white">Branding</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Accent Color</label>
+                    <div class="flex items-center gap-3">
+                      <input name="accent" type="color" class="w-12 h-10 rounded-lg bg-transparent border border-slate-700 cursor-pointer" />
+                      <div class="flex gap-2">
+                        <button type="button" data-color="#10b981" class="w-7 h-7 rounded-full bg-emerald-500 ring-offset-2 ring-offset-slate-900 hover:scale-110 transition" title="Emerald"></button>
+                        <button type="button" data-color="#06b6d4" class="w-7 h-7 rounded-full bg-cyan-500 hover:scale-110 transition" title="Cyan"></button>
+                        <button type="button" data-color="#8b5cf6" class="w-7 h-7 rounded-full bg-violet-500 hover:scale-110 transition" title="Violet"></button>
+                        <button type="button" data-color="#f59e0b" class="w-7 h-7 rounded-full bg-amber-500 hover:scale-110 transition" title="Amber"></button>
+                        <button type="button" data-color="#f43f5e" class="w-7 h-7 rounded-full bg-rose-500 hover:scale-110 transition" title="Rose"></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Logo Initials (2 letters)</label>
+                    <input name="initials" maxlength="2" class="input w-full rounded-lg px-3 py-2.5 text-sm uppercase" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass rounded-2xl p-6 space-y-5">
+                <h4 class="font-semibold text-white">Invoice Defaults</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Currency</label>
+                    <select name="currency" class="input w-full rounded-lg px-3 py-2.5 text-sm">
+                      <option value="USD">USD ($)</option>
+                      <option value="EUR">EUR (€)</option>
+                      <option value="GBP">GBP (£)</option>
+                      <option value="PKR">PKR (Rs)</option>
+                      <option value="AED">AED (د.إ)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Invoice Number Prefix</label>
+                    <input name="prefix" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Default Tax (%)</label>
+                    <input name="defaultTax" type="number" min="0" step="0.1" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-400 mb-1 block">Payment Terms (days)</label>
+                    <input name="terms" type="number" min="0" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                  <div>
+                    <p class="text-sm font-semibold text-white">Show "Thank you" footer</p>
+                    <p class="text-xs text-slate-500">Displays a footer line on printed invoices.</p>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" name="showFooter" />
+                    <span></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="btn-primary px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
+                  <i data-lucide="check" class="w-4 h-4"></i> Save Settings
+                </button>
+              </div>
+            </div>
+          </form>
         </section>
 
       </main>
@@ -558,7 +699,7 @@
             </select>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-400 mb-1 block">Deal Value ($)</label>
+            <label class="text-xs font-semibold text-slate-400 mb-1 block">Deal Value</label>
             <input name="value" type="number" min="0" placeholder="e.g. 2500" class="input w-full rounded-lg px-3 py-2.5 text-sm" />
           </div>
         </div>
@@ -570,7 +711,7 @@
     </div>
   </div>
 
-  <!-- ============ CONFIRM (DELETE) MODAL ============ -->
+  <!-- ============ CONFIRM MODAL ============ -->
   <div id="confirmModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop">
     <div class="glass modal-panel rounded-2xl w-full max-w-md p-6">
       <div class="flex items-start gap-4">
@@ -592,17 +733,16 @@
   <div id="toastContainer" class="fixed bottom-6 right-6 z-[80] space-y-3"></div>
 
   <script>
-    /* ============ HELPERS ============ */
+    /* ============ KEYS & HELPERS ============ */
     const CLIENTS_KEY = 'clientflow_clients';
     const INVOICES_KEY = 'clientflow_invoices';
+    const SETTINGS_KEY = 'clientflow_settings';
 
     function escapeHTML(str) {
       return String(str ?? '').replace(/[&<>"']/g, c => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       }[c]));
     }
-
-    const money = n => '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     function showToast(message, type = 'success') {
       const colors = type === 'success' ? 'border-emerald-500/40 text-emerald-300' : 'border-rose-500/40 text-rose-300';
@@ -612,6 +752,165 @@
       document.getElementById('toastContainer').appendChild(toast);
       setTimeout(() => toast.remove(), 2800);
     }
+
+    /* ============ SETTINGS ============ */
+    const defaultSettings = {
+      agencyName: 'ClientFlow Agency',
+      ownerName: 'Daniyal Dynihmind',
+      email: 'billing@clientflow.dev',
+      phone: '',
+      address: 'Karachi, Pakistan',
+      tagline: 'Digital Agency',
+      website: '',
+      accent: '#10b981',
+      initials: 'CF',
+      currency: 'USD',
+      prefix: 'INV-',
+      defaultTax: 0,
+      terms: 14,
+      showFooter: true
+    };
+
+    const CURRENCY_SYMBOLS = { USD: '$', EUR: '€', GBP: '£', PKR: 'Rs ', AED: 'AED ' };
+
+    let settings = loadSettings();
+
+    function loadSettings() {
+      const saved = localStorage.getItem(SETTINGS_KEY);
+      return saved ? { ...defaultSettings, ...JSON.parse(saved) } : { ...defaultSettings };
+    }
+
+    function saveSettingsToStorage() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+
+    // Currency-aware money formatter used across the whole app
+    function money(n) {
+      const sym = CURRENCY_SYMBOLS[settings.currency] || '$';
+      return sym + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Apply branding everywhere in the UI
+    function applyBranding() {
+      const accent = settings.accent;
+      document.documentElement.style.setProperty('--accent', accent);
+      document.getElementById('sideBrandName').textContent = settings.agencyName.split(' ')[0] || 'Client';
+      document.getElementById('sideLogo').innerHTML = `<span class="font-extrabold text-slate-950 text-sm">${escapeHTML(settings.initials || 'CF')}</span>`;
+      document.getElementById('sideLogo').style.background = `linear-gradient(135deg, ${accent}, ${accent}99)`;
+
+      const avatarInitials = (settings.ownerName || 'DD').split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+      document.getElementById('headerAvatar').textContent = avatarInitials;
+      document.getElementById('headerName').textContent = settings.ownerName;
+      document.getElementById('greetName').textContent = (settings.ownerName || '').split(' ')[0];
+
+      // Invoice paper branding
+      document.getElementById('p-agency').textContent = settings.agencyName;
+      document.getElementById('p-agency').style.color = accent;
+      document.getElementById('p-address').textContent = settings.address;
+      document.getElementById('p-email').textContent = settings.email;
+      document.getElementById('p-footer').textContent = settings.showFooter ? 'Thank you for your business.' : '';
+      document.getElementById('p-footer').style.display = settings.showFooter ? '' : 'none';
+
+      // Accent glow for primary buttons and active nav
+      let styleTag = document.getElementById('accentStyle');
+      if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'accentStyle';
+        document.head.appendChild(styleTag);
+      }
+      styleTag.textContent = `
+        .btn-primary { background: linear-gradient(135deg, ${accent}, ${accent}cc) !important; }
+        .nav-item.active { color: ${accent} !important; box-shadow: inset 3px 0 0 ${accent} !important; }
+        .glow-text { background: linear-gradient(135deg, ${accent}, #06b6d4) !important; -webkit-background-clip: text !important; }
+        .tilt:hover { border-color: ${accent}66 !important; }
+      `;
+    }
+
+    // Fill settings form with saved values
+    function fillSettingsForm() {
+      const form = document.getElementById('settingsForm');
+      Object.keys(defaultSettings).forEach(key => {
+        const el = form.elements[key];
+        if (!el) return;
+        if (el.type === 'checkbox') el.checked = !!settings[key];
+        else el.value = settings[key];
+      });
+      updateBrandPreview();
+    }
+
+    function readSettingsForm() {
+      const form = document.getElementById('settingsForm');
+      const data = {};
+      Object.keys(defaultSettings).forEach(key => {
+        const el = form.elements[key];
+        if (!el) return;
+        if (el.type === 'checkbox') data[key] = el.checked;
+        else if (el.type === 'number') data[key] = Number(el.value) || 0;
+        else data[key] = el.value.trim();
+      });
+      data.initials = (data.initials || 'CF').toUpperCase().slice(0, 2);
+      return data;
+    }
+
+    function updateBrandPreview() {
+      const form = document.getElementById('settingsForm');
+      const accent = form.elements.accent.value || settings.accent;
+      const initials = (form.elements.initials.value || 'CF').toUpperCase().slice(0, 2);
+      const logo = document.getElementById('prevLogo');
+      logo.textContent = initials;
+      logo.style.background = `linear-gradient(135deg, ${accent}, ${accent}99)`;
+      document.getElementById('prevName').textContent = form.elements.agencyName.value || 'Your Agency';
+      document.getElementById('prevTag').textContent = form.elements.tagline.value || 'Your tagline';
+      const btn = document.getElementById('prevBtn');
+      btn.style.background = accent;
+    }
+
+    document.getElementById('settingsForm').addEventListener('input', updateBrandPreview);
+
+    // Preset color buttons
+    document.querySelectorAll('[data-color]').forEach(b => {
+      b.addEventListener('click', () => {
+        document.getElementById('settingsForm').elements.accent.value = b.dataset.color;
+        updateBrandPreview();
+      });
+    });
+
+    document.getElementById('settingsForm').addEventListener('submit', e => {
+      e.preventDefault();
+      settings = { ...settings, ...readSettingsForm() };
+      saveSettingsToStorage();
+      applyBranding();
+      updatePreview();
+      showToast('Settings saved successfully.');
+    });
+
+    document.getElementById('resetSettings').addEventListener('click', () => {
+      openConfirm({
+        title: 'Reset settings?',
+        message: 'Your agency profile and branding will return to the default values.',
+        onConfirm: () => {
+          settings = { ...defaultSettings };
+          saveSettingsToStorage();
+          fillSettingsForm();
+          applyBranding();
+          updatePreview();
+          showToast('Settings reset to defaults.');
+        }
+      });
+    });
+
+    document.getElementById('clearData').addEventListener('click', () => {
+      openConfirm({
+        title: 'Clear all data?',
+        message: 'All clients, invoices and settings will be deleted from this browser. This cannot be undone.',
+        onConfirm: () => {
+          localStorage.removeItem(CLIENTS_KEY);
+          localStorage.removeItem(INVOICES_KEY);
+          localStorage.removeItem(SETTINGS_KEY);
+          location.reload();
+        }
+      });
+    });
 
     /* ============ CUSTOM CONFIRM ============ */
     const confirmModal = document.getElementById('confirmModal');
@@ -861,7 +1160,7 @@
 
     function nextInvoiceNumber() {
       const max = invoices.reduce((m, i) => Math.max(m, i.id), 1023);
-      return 'INV-' + (max + 1);
+      return (settings.prefix || 'INV-') + (max + 1);
     }
 
     function itemRowHTML(item = { desc: '', qty: 1, price: 0 }) {
@@ -876,7 +1175,6 @@
       </div>`;
     }
 
-    // Remove item row (event delegation, works for dynamically added rows)
     itemsWrap.addEventListener('click', e => {
       const btn = e.target.closest('.remove-item');
       if (btn) { btn.parentElement.remove(); updatePreview(); }
@@ -943,10 +1241,10 @@
       editingId = null;
       document.getElementById('f-number').value = nextInvoiceNumber();
       document.getElementById('f-date').value = new Date().toISOString().slice(0, 10);
-      const due = new Date(); due.setDate(due.getDate() + 14);
+      const due = new Date(); due.setDate(due.getDate() + Number(settings.terms || 14));
       document.getElementById('f-due').value = due.toISOString().slice(0, 10);
       document.getElementById('f-status').value = 'Pending';
-      document.getElementById('f-tax').value = 0;
+      document.getElementById('f-tax').value = settings.defaultTax || 0;
       document.getElementById('f-discount').value = 0;
       document.getElementById('f-notes').value = '';
       itemsWrap.innerHTML = itemRowHTML({ desc: 'Web development service', qty: 1, price: 1000 });
@@ -984,7 +1282,6 @@
       updatePreview();
     });
 
-    // Live preview: update on any input change in the builder
     document.getElementById('view-builder').addEventListener('input', updatePreview);
     document.getElementById('view-builder').addEventListener('change', updatePreview);
 
@@ -1008,7 +1305,7 @@
     document.getElementById('printBtn').addEventListener('click', () => window.print());
 
     /* ============ NAVIGATION ============ */
-    function showView(name, btn) {
+    function showView(name) {
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
       document.getElementById('view-' + name).classList.remove('hidden');
 
@@ -1023,6 +1320,7 @@
 
       if (name === 'invoices') renderInvoices();
       if (name === 'dashboard') updateDashboard();
+      if (name === 'settings') fillSettingsForm();
       lucide.createIcons();
     }
 
@@ -1030,7 +1328,6 @@
       btn.addEventListener('click', () => showView(btn.dataset.view));
     });
 
-    // Header search filters clients
     document.getElementById('globalSearch').addEventListener('input', e => {
       document.getElementById('clientSearch').value = e.target.value;
       showView('clients');
@@ -1064,22 +1361,24 @@
       type: 'bar',
       data: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{ label: 'Revenue ($)', data: [4200, 5800, 4900, 7200, 6800, 9100], backgroundColor: gradient, borderRadius: 8, borderSkipped: false, maxBarThickness: 48 }]
+        datasets: [{ label: 'Revenue', data: [4200, 5800, 4900, 7200, 6800, 9100], backgroundColor: gradient, borderRadius: 8, borderSkipped: false, maxBarThickness: 48 }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          tooltip: { backgroundColor: '#0f172a', borderColor: '#10b981', borderWidth: 1, padding: 12, callbacks: { label: c => ' $' + c.parsed.y.toLocaleString() } }
+          tooltip: { backgroundColor: '#0f172a', borderColor: '#10b981', borderWidth: 1, padding: 12, callbacks: { label: c => ' ' + money(c.parsed.y) } }
         },
         scales: {
           x: { ticks: { color: '#64748b' }, grid: { display: false } },
-          y: { ticks: { color: '#64748b', callback: v => '$' + v.toLocaleString() }, grid: { color: 'rgba(148,163,184,0.08)' } }
+          y: { ticks: { color: '#64748b', callback: v => money(v) }, grid: { color: 'rgba(148,163,184,0.08)' } }
         }
       }
     });
 
     /* ============ INIT ============ */
+    applyBranding();
+    fillSettingsForm();
     lucide.createIcons();
     renderClients();
     renderInvoices();
