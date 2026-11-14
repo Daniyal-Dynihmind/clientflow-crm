@@ -1,114 +1,272 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClientFlow CRM</title>
+  <title>ClientFlow | CRM & Invoicing for Agencies</title>
+
+  <!-- Fonts & Libraries -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top left, #0f1f1c 0%, #05070d 45%, #05070d 100%);
+      min-height: 100vh;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .glow-text {
+      background: linear-gradient(135deg, #34d399, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-item {
+      transition: all 0.2s ease;
+    }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(16,185,129,0.18), rgba(16,185,129,0.02));
+      color: #34d399;
+      border-left: 3px solid #10b981;
+    }
+    .card-hover {
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 10px 40px -10px rgba(16, 185, 129, 0.25);
+    }
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-200 font-sans">
+
+<body class="text-slate-200">
 
   <div class="flex min-h-screen">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900 border-r border-slate-800 p-6 hidden md:block">
-      <h1 class="text-2xl font-bold text-emerald-400 mb-10">ClientFlow</h1>
-      <nav class="space-y-2">
-        <button onclick="showView('dashboard')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">📊 Dashboard</button>
-        <button onclick="showView('clients')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">👥 Clients</button>
-        <button onclick="showView('invoices')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">🧾 Invoices</button>
-        <button onclick="showView('settings')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800">⚙️ Settings</button>
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="glass w-64 flex-col p-6 hidden md:flex sticky top-0 h-screen">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-10 px-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+          <i data-lucide="zap" class="w-5 h-5 text-slate-950"></i>
+        </div>
+        <h1 class="text-xl font-extrabold tracking-tight text-white">Client<span class="text-emerald-400">Flow</span></h1>
+      </div>
+
+      <!-- Navigation -->
+      <p class="text-xs uppercase tracking-widest text-slate-500 px-3 mb-3">Main Menu</p>
+      <nav class="space-y-1">
+        <button onclick="showView('dashboard', this)" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+        </button>
+        <button onclick="showView('clients', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="users" class="w-5 h-5"></i> Clients
+        </button>
+        <button onclick="showView('invoices', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="file-text" class="w-5 h-5"></i> Invoices
+        </button>
+        <button onclick="showView('settings', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left font-medium text-slate-400 hover:text-white hover:bg-slate-800/60">
+          <i data-lucide="settings" class="w-5 h-5"></i> Settings
+        </button>
       </nav>
+
+      <!-- Upgrade card -->
+      <div class="mt-auto p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/10 border border-emerald-500/20">
+        <p class="text-sm font-semibold text-white">Pro Plan</p>
+        <p class="text-xs text-slate-400 mt-1">Unlock unlimited clients and invoices.</p>
+        <button class="mt-3 w-full text-sm font-semibold py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">Upgrade</button>
+      </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6 md:p-10">
+    <!-- ============ MAIN ============ -->
+    <div class="flex-1 flex flex-col min-w-0">
 
-      <!-- Dashboard View -->
-      <section id="view-dashboard" class="view">
-        <h2 class="text-3xl font-bold mb-2">Dashboard</h2>
-        <p class="text-slate-400 mb-8">Welcome back! Here is your business overview.</p>
-
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <p class="text-slate-400 text-sm">Total Revenue</p>
-            <h3 class="text-3xl font-bold text-emerald-400 mt-2">$42,500</h3>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <p class="text-slate-400 text-sm">Active Projects</p>
-            <h3 class="text-3xl font-bold text-white mt-2">8</h3>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <p class="text-slate-400 text-sm">Pending Invoices</p>
-            <h3 class="text-3xl font-bold text-amber-400 mt-2">3</h3>
+      <!-- Top Header -->
+      <header class="glass sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-4">
+        <div class="relative w-full max-w-md hidden sm:block">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+          <input type="text" placeholder="Search clients, invoices..."
+            class="w-full bg-slate-900/70 border border-slate-800 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-emerald-500 transition" />
+        </div>
+        <div class="flex items-center gap-4 ml-auto">
+          <button class="p-2 rounded-lg hover:bg-slate-800 transition relative">
+            <i data-lucide="bell" class="w-5 h-5 text-slate-400"></i>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-400 rounded-full"></span>
+          </button>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center font-bold text-slate-950 text-sm">DD</div>
+            <div class="hidden lg:block leading-tight">
+              <p class="text-sm font-semibold text-white">Daniyal Dynihmind</p>
+              <p class="text-xs text-slate-500">Agency Owner</p>
+            </div>
           </div>
         </div>
+      </header>
 
-        <!-- Chart -->
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
-          <h4 class="font-semibold mb-4">Revenue Analytics</h4>
-          <canvas id="revenueChart" height="100"></canvas>
-        </div>
+      <!-- Page Content -->
+      <main class="p-6 md:p-10 space-y-8">
 
-        <!-- Recent Activity -->
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          <h4 class="font-semibold mb-4">Recent Activity</h4>
-          <ul class="space-y-3 text-sm text-slate-300">
-            <li>✅ Invoice #1024 paid by Acme Corp</li>
-            <li>🆕 New lead added: Bright Studio</li>
-            <li>📄 Invoice #1025 sent to Nova Labs</li>
-            <li>⏳ Invoice #1023 is overdue (TechWave)</li>
-          </ul>
-        </div>
-      </section>
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <section id="view-dashboard" class="view space-y-8">
 
-      <!-- Placeholder Views (Part 2, 3, 4 mein banenge) -->
-      <section id="view-clients" class="view hidden">
-        <h2 class="text-3xl font-bold">Clients</h2>
-        <p class="text-slate-400 mt-2">Part 2 mein banayenge.</p>
-      </section>
+          <div>
+            <h2 class="text-3xl font-extrabold text-white">Good morning, <span class="glow-text">Daniyal</span> 👋</h2>
+            <p class="text-slate-400 mt-1">Here is what is happening with your business this month.</p>
+          </div>
 
-      <section id="view-invoices" class="view hidden">
-        <h2 class="text-3xl font-bold">Invoices</h2>
-        <p class="text-slate-400 mt-2">Part 3 mein banayenge.</p>
-      </section>
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass card-hover rounded-2xl p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-sm text-slate-400">Total Revenue</p>
+                  <h3 class="text-3xl font-extrabold text-white mt-2">$42,500</h3>
+                </div>
+                <div class="p-2.5 rounded-xl bg-emerald-500/15"><i data-lucide="dollar-sign" class="w-5 h-5 text-emerald-400"></i></div>
+              </div>
+              <p class="text-xs text-emerald-400 mt-4 flex items-center gap-1"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +18.2% from last month</p>
+            </div>
 
-      <section id="view-settings" class="view hidden">
-        <h2 class="text-3xl font-bold">Settings</h2>
-        <p class="text-slate-400 mt-2">Part 4 mein banayenge.</p>
-      </section>
+            <div class="glass card-hover rounded-2xl p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-sm text-slate-400">Active Projects</p>
+                  <h3 class="text-3xl font-extrabold text-white mt-2">8</h3>
+                </div>
+                <div class="p-2.5 rounded-xl bg-cyan-500/15"><i data-lucide="briefcase" class="w-5 h-5 text-cyan-400"></i></div>
+              </div>
+              <p class="text-xs text-cyan-400 mt-4 flex items-center gap-1"><i data-lucide="activity" class="w-3.5 h-3.5"></i> 3 due this week</p>
+            </div>
 
-    </main>
+            <div class="glass card-hover rounded-2xl p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-sm text-slate-400">Pending Invoices</p>
+                  <h3 class="text-3xl font-extrabold text-white mt-2">3</h3>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-500/15"><i data-lucide="clock" class="w-5 h-5 text-amber-400"></i></div>
+              </div>
+              <p class="text-xs text-amber-400 mt-4 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> 1 overdue</p>
+            </div>
+          </div>
+
+          <!-- Chart + Activity -->
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div class="glass rounded-2xl p-6 xl:col-span-2">
+              <div class="flex justify-between items-center mb-6">
+                <div>
+                  <h4 class="font-semibold text-white">Revenue Analytics</h4>
+                  <p class="text-xs text-slate-500">Last 6 months</p>
+                </div>
+                <span class="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300">2026</span>
+              </div>
+              <canvas id="revenueChart" height="120"></canvas>
+            </div>
+
+            <div class="glass rounded-2xl p-6">
+              <h4 class="font-semibold text-white mb-6">Recent Activity</h4>
+              <ul class="space-y-5">
+                <li class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i></div>
+                  <div><p class="text-sm text-slate-200">Invoice #1024 paid by <span class="font-semibold">Acme Corp</span></p><p class="text-xs text-slate-500">2 hours ago</p></div>
+                </li>
+                <li class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-cyan-500/15 flex items-center justify-center shrink-0"><i data-lucide="user-plus" class="w-4 h-4 text-cyan-400"></i></div>
+                  <div><p class="text-sm text-slate-200">New lead added: <span class="font-semibold">Bright Studio</span></p><p class="text-xs text-slate-500">5 hours ago</p></div>
+                </li>
+                <li class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-violet-500/15 flex items-center justify-center shrink-0"><i data-lucide="send" class="w-4 h-4 text-violet-400"></i></div>
+                  <div><p class="text-sm text-slate-200">Invoice #1025 sent to <span class="font-semibold">Nova Labs</span></p><p class="text-xs text-slate-500">Yesterday</p></div>
+                </li>
+                <li class="flex gap-3">
+                  <div class="w-8 h-8 rounded-full bg-rose-500/15 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i></div>
+                  <div><p class="text-sm text-slate-200">Invoice #1023 is overdue (<span class="font-semibold">TechWave</span>)</p><p class="text-xs text-slate-500">2 days ago</p></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PLACEHOLDER VIEWS (Part 2, 3, 4) ===== -->
+        <section id="view-clients" class="view hidden">
+          <h2 class="text-3xl font-extrabold text-white">Clients</h2>
+          <p class="text-slate-400 mt-2">Coming in Part 2.</p>
+        </section>
+
+        <section id="view-invoices" class="view hidden">
+          <h2 class="text-3xl font-extrabold text-white">Invoices</h2>
+          <p class="text-slate-400 mt-2">Coming in Part 3.</p>
+        </section>
+
+        <section id="view-settings" class="view hidden">
+          <h2 class="text-3xl font-extrabold text-white">Settings</h2>
+          <p class="text-slate-400 mt-2">Coming in Part 4.</p>
+        </section>
+
+      </main>
+    </div>
   </div>
 
   <script>
-    // Navigation: ek waqt par ek hi view dikhega
-    function showView(name) {
+    // Switch between views and update the active sidebar item
+    function showView(name, btn) {
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
       document.getElementById('view-' + name).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-item').forEach(n => {
+        n.classList.remove('active', 'text-emerald-400');
+        n.classList.add('text-slate-400');
+      });
+      btn.classList.add('active');
+      btn.classList.remove('text-slate-400');
     }
 
-    // Revenue Chart
-    const ctx = document.getElementById('revenueChart');
-    new Chart(ctx, {
+    // Render Lucide icons
+    lucide.createIcons();
+
+    // Revenue chart with gradient fill
+    const canvas = document.getElementById('revenueChart');
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.9)');
+    gradient.addColorStop(1, 'rgba(6, 182, 212, 0.15)');
+
+    new Chart(canvas, {
       type: 'bar',
       data: {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
           label: 'Revenue ($)',
           data: [4200, 5800, 4900, 7200, 6800, 9100],
-          backgroundColor: '#10b981',
-          borderRadius: 6
+          backgroundColor: gradient,
+          borderRadius: 8,
+          borderSkipped: false,
+          maxBarThickness: 48
         }]
       },
       options: {
-        plugins: { legend: { labels: { color: '#cbd5e1' } } },
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            borderColor: '#10b981',
+            borderWidth: 1,
+            padding: 12,
+            callbacks: { label: ctx => ' $' + ctx.parsed.y.toLocaleString() }
+          }
+        },
         scales: {
-          x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-          y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+          x: { ticks: { color: '#64748b' }, grid: { display: false } },
+          y: { ticks: { color: '#64748b', callback: v => '$' + v.toLocaleString() }, grid: { color: 'rgba(148,163,184,0.08)' } }
         }
       }
     });
