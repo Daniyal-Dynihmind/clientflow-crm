@@ -69,3 +69,49 @@ ClientFlow brings everything into one place:
 ---
 
 ## 📂 Project Structure
+
+clientflow-crm/
+├── index.html       # App layout and structure
+├── css/
+│   └── styles.css   # Theme, glass UI, animations and print styles
+├── js/
+│   └── app.js       # Application logic (CRM, invoices, settings)
+└── README.md
+
+---
+
+## 🚀 Getting Started
+
+1. Clone or download this repository.
+2. Open `index.html` in any modern browser.
+3. That's it. No installation or build step is needed.
+
+---
+
+## 🧪 How to Test
+
+1. Go to **Clients** and add a new client.
+2. Go to **Invoices → New Invoice**, fill in the details and watch the live preview.
+3. Click **Save Invoice**, then check the Dashboard revenue.
+4. Go to **Settings**, change the agency name or accent color, and save.
+
+---
+
+## 🔭 Future Improvements
+
+- Backend database (Supabase) for multi-user login
+- Email invoices directly to clients
+- Payment gateway integration (Stripe)
+- Recurring invoices and payment reminders
+
+---
+
+## 👨‍💻 Author
+
+**Daniyal Dynihmind**
+Vibe Coder and Full-Stack Builder | Karachi, Pakistan
+
+- GitHub: [@Daniyal-Dynihmind](https://github.com/Daniyal-Dynihmind)
+- Open for freelance and client projects
+
+If you like this project, give it a ⭐ on GitHub!
